@@ -20,7 +20,7 @@ func CreatePlayerHandler(response http.ResponseWriter, request *http.Request) {
 		response.Write(controllers.ResponseString(s))
 		return
 	}
-	result, err := model.AddPlayer(p)
+	result, err := controllers.AddPlayer(p)
 	if err != nil {
 		response.WriteHeader(http.StatusInternalServerError)
 		response.Write(controllers.ResponseError(err))

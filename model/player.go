@@ -2,21 +2,21 @@ package model
 
 import (
 	"context"
-	"log"
+	"sync"
 	"time"
-
-	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/sarthakpranesh/Questioner/connect"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// Player struct describes a players attributes
 type Player struct {
 	ID        primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
 	Username  string             `json:"username,omitempty" bson:"username,omitempty"`
 	Firstname string             `json:"firstname,omitempty" bson:"firstname,omitempty"`
 	Lastname  string             `json:"lastname,omitempty" bson:"lastname,omitempty"`
-	Score     uint32             `json:"score" bson:"score"`
+	Email     string             `json:"email,omitempty" bson:"email,omitempty"`
+	Score     uint32             `json:"score,omitempty" bson:"score,omitempty"`
 }
 
 // Valid checks this validity of the Type Person
@@ -33,18 +33,43 @@ func (p *Player) Valid() (bool, string) {
 		return false, "Lastname should be 3 to 30 characters long."
 	}
 
+	var wg sync.WaitGroup
+	checkArray := []Player{Player{Email: p.Email}, Player{Username: p.Username}}
+	i := len(checkArray)
+	check := make(chan bool, i)
+	whatFailed := make(chan string, i)
+	defer close(check)
+	defer close(whatFailed)
+	wg.Add(i)
+	for _, v := range checkArray {
+		val := v
+		go func() {
+			b, s := checkUniqueProperty(val)
+			check <- b
+			whatFailed <- s
+			wg.Done()
+		}()
+	}
+
+	wg.Wait()
+	for ; i > 0; i-- {
+		if <-check == false {
+			return false, <-whatFailed
+		}
+		<-whatFailed
+	}
+
 	return true, ""
 }
 
-// AddPlayer adds a player to the player collection
-func AddPlayer(p Player) (*mongo.InsertOneResult, error) {
+func checkUniqueProperty(p Player) (bool, string) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	collection := connect.Collection("test", "player")
-	result, err := collection.InsertOne(ctx, p)
-	if err != nil {
-		log.Println("Mongo Insertion Error:", err.Error())
-		return nil, err
+	var found, empty Player
+	_ = collection.FindOne(ctx, p).Decode(&found)
+	if found != empty {
+		return false, "Username/Email already in use!"
 	}
-	return result, nil
+	return true, ""
 }
