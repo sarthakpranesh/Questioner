@@ -20,6 +20,7 @@ func main() {
 
 	router := mux.NewRouter()
 	router.HandleFunc("/player", handlers.CreatePlayerHandler).Methods("POST")
+	router.HandleFunc("/question", handlers.CreateQuestion).Methods("POST")
 
 	err := http.ListenAndServe(":8080", router)
 	if err != nil {
