@@ -17,6 +17,7 @@ type Player struct {
 	Lastname  string             `json:"lastname,omitempty" bson:"lastname,omitempty"`
 	Email     string             `json:"email,omitempty" bson:"email,omitempty"`
 	Score     uint32             `json:"score,omitempty" bson:"score,omitempty"`
+	Level     uint8              `json:"level,omitempty" bson:"level,omitempty"`
 }
 
 // Valid checks this validity of the Type Person
