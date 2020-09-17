@@ -22,7 +22,8 @@ func main() {
 	router.HandleFunc("/player", handlers.CreatePlayerHandler).Methods("POST")
 	router.HandleFunc("/player/update", handlers.UpdatePlayerHandler).Methods("POST")
 	router.HandleFunc("/player/{id}", handlers.GetPlayerHandler).Methods("GET")
-	router.HandleFunc("/question", handlers.CreateQuestion).Methods("POST")
+	router.HandleFunc("/question", handlers.CreateQuestionHandler).Methods("POST")
+	router.HandleFunc("/question/{id}", handlers.GetQuestionHandler).Methods("GET")
 
 	err := http.ListenAndServe(":8080", router)
 	if err != nil {

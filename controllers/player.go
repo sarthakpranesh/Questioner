@@ -5,7 +5,9 @@ import (
 	"log"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/sarthakpranesh/Questioner/connect"
 	"github.com/sarthakpranesh/Questioner/model"
@@ -39,16 +41,26 @@ func GetPlayer(id primitive.ObjectID) (model.Player, error) {
 	return p, nil
 }
 
-// UpdatePlayer updates the given player by matching it with id
-func UpdatePlayer(id primitive.ObjectID, p model.Player) (model.Player, error) {
+// UpdatePlayerUsername updates the given player by matching it with id
+func UpdatePlayerUsername(id primitive.ObjectID, username string) (model.Player, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	collection := connect.Collection("test", "player")
+	update := bson.M{
+		"$set": bson.M{"username": username},
+	}
+	upsert := true
+	after := options.After
+	opt := options.FindOneAndUpdateOptions{
+		ReturnDocument: &after,
+		Upsert:         &upsert,
+	}
 	var pNew model.Player
 	err := collection.FindOneAndUpdate(
 		ctx,
 		model.Player{ID: id},
-		p,
+		update,
+		&opt,
 	).Decode(&pNew)
 	if err != nil {
 		log.Println("Error in UpdatePlayer:", err.Error())

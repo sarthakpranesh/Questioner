@@ -11,27 +11,26 @@ import (
 
 // Player struct describes a players attributes
 type Player struct {
-	ID        primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	Username  string             `json:"username,omitempty" bson:"username,omitempty"`
-	Firstname string             `json:"firstname,omitempty" bson:"firstname,omitempty"`
-	Lastname  string             `json:"lastname,omitempty" bson:"lastname,omitempty"`
-	Email     string             `json:"email,omitempty" bson:"email,omitempty"`
-	Score     uint32             `json:"score,omitempty" bson:"score,omitempty"`
-	Level     uint8              `json:"level,omitempty" bson:"level,omitempty"`
+	ID       primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	Username string             `json:"username,omitempty" bson:"username,omitempty"`
+	Email    string             `json:"email,omitempty" bson:"email,omitempty"`
+	Score    uint32             `json:"score,omitempty" bson:"score,omitempty"`
+	Level    uint8              `json:"level,omitempty" bson:"level,omitempty"`
+}
+
+// CheckUsername verifies the username update the player does
+func (p *Player) CheckUsername() (bool, string) {
+	if len(p.Username) < 6 || len(p.Username) > 40 {
+		return false, "Username should be 6 to 40 characters long."
+	}
+
+	return checkUniqueProperty(Player{Username: p.Username})
 }
 
 // Valid checks this validity of the Type Person
 func (p *Player) Valid() (bool, string) {
 	if len(p.Username) < 6 || len(p.Username) > 40 {
 		return false, "Username should be 6 to 40 characters long."
-	}
-
-	if len(p.Firstname) < 3 || len(p.Firstname) > 30 {
-		return false, "Firstname should be 3 to 30 characters long."
-	}
-
-	if len(p.Lastname) < 3 || len(p.Lastname) > 30 {
-		return false, "Lastname should be 3 to 30 characters long."
 	}
 
 	var wg sync.WaitGroup

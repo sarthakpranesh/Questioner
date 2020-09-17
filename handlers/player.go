@@ -53,6 +53,7 @@ func GetPlayerHandler(response http.ResponseWriter, request *http.Request) {
 	json.NewEncoder(response).Encode(result)
 }
 
+// UpdatePlayerHandler is used to update username of the player
 func UpdatePlayerHandler(response http.ResponseWriter, request *http.Request) {
 	response.Header().Add("content-type", "application/json")
 	s := strings.ReplaceAll(request.Header.Values("Authorization")[0], "Bearer ", "")
@@ -65,10 +66,13 @@ func UpdatePlayerHandler(response http.ResponseWriter, request *http.Request) {
 		response.Write(controllers.ResponseError(err))
 		return
 	}
-	p.ID = primitive.ObjectID{}
-	p.Level = 0
-	p.Score = 0
-	result, err2 := controllers.UpdatePlayer(id, p)
+	b, s := p.CheckUsername()
+	if b == false {
+		response.WriteHeader(http.StatusInternalServerError)
+		response.Write(controllers.ResponseString(s))
+		return
+	}
+	result, err2 := controllers.UpdatePlayerUsername(id, p.Username)
 	if err2 != nil {
 		response.WriteHeader(http.StatusInternalServerError)
 		response.Write(controllers.ResponseError(err2))

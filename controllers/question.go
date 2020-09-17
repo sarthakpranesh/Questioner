@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/sarthakpranesh/Questioner/connect"
@@ -22,4 +23,18 @@ func AddQuestion(q model.Question) (*mongo.InsertOneResult, error) {
 		return &mongo.InsertOneResult{}, err
 	}
 	return result, nil
+}
+
+// GetQuestion retrives a player info from the database
+func GetQuestion(id primitive.ObjectID) (model.Question, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	collection := connect.Collection("test", "question")
+	var q model.Question
+	err := collection.FindOne(ctx, model.Question{ID: id}).Decode(&q)
+	if err != nil {
+		log.Println("Error in GetQuestion:", err.Error())
+		return model.Question{}, err
+	}
+	return q, nil
 }
