@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/sarthakpranesh/Questioner/controllers"
+	"github.com/sarthakpranesh/Questioner/controllers/question"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/sarthakpranesh/Questioner/model"
@@ -29,7 +30,7 @@ func CreateQuestionHandler(response http.ResponseWriter, request *http.Request) 
 		response.Write(controllers.ResponseString(s))
 		return
 	}
-	result, err := controllers.AddQuestion(q)
+	result, err := question.AddQuestion(q)
 	if err != nil {
 		response.WriteHeader(http.StatusInternalServerError)
 		response.Write(controllers.ResponseError(err))
@@ -48,7 +49,7 @@ func GetQuestionHandler(response http.ResponseWriter, request *http.Request) {
 		response.Write(controllers.ResponseError(err))
 		return
 	}
-	q, err2 := controllers.GetQuestion(id)
+	q, err2 := question.GetQuestion(id)
 	if err2 != nil {
 		response.WriteHeader(http.StatusInternalServerError)
 		response.Write(controllers.ResponseError(err))

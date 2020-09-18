@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/sarthakpranesh/Questioner/handlers"
+	"github.com/sarthakpranesh/Questioner/handlers/player"
 
 	"github.com/joho/godotenv"
 	"github.com/sarthakpranesh/Questioner/connect"
@@ -19,9 +20,9 @@ func main() {
 	defer cancel()
 
 	router := mux.NewRouter()
-	router.HandleFunc("/player", handlers.CreatePlayerHandler).Methods("POST")
-	router.HandleFunc("/player/update", handlers.UpdatePlayerHandler).Methods("POST")
-	router.HandleFunc("/player/{id}", handlers.GetPlayerHandler).Methods("GET")
+	router.HandleFunc("/player", player.CreatePlayerHandler).Methods("POST")
+	router.HandleFunc("/player/update", player.UpdatePlayerHandler).Methods("POST")
+	router.HandleFunc("/player/{id}", player.GetPlayerHandler).Methods("GET")
 	router.HandleFunc("/question", handlers.CreateQuestionHandler).Methods("POST")
 	router.HandleFunc("/question/{id}", handlers.GetQuestionHandler).Methods("GET")
 
