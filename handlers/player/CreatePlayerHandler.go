@@ -6,10 +6,18 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/dgrijalva/jwt-go"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"github.com/sarthakpranesh/Questioner/controllers"
 	"github.com/sarthakpranesh/Questioner/controllers/player"
 	"github.com/sarthakpranesh/Questioner/model"
 )
+
+type CreatePlayerResponse struct {
+	Message string `json:"message"`
+	Token   string `json:"token"`
+}
 
 // CreatePlayerHandler creates a player if all checks pass
 func CreatePlayerHandler(response http.ResponseWriter, request *http.Request) {
@@ -37,5 +45,10 @@ func CreatePlayerHandler(response http.ResponseWriter, request *http.Request) {
 		response.Write(controllers.ResponseError(err))
 		return
 	}
-	json.NewEncoder(response).Encode(result)
+	token := jwt.EncodeSegment([]byte(result.InsertedID.(primitive.ObjectID).Hex()))
+	var cpr *CreatePlayerResponse = &CreatePlayerResponse{
+		Message: "Player Registered!",
+		Token:   token,
+	}
+	json.NewEncoder(response).Encode(cpr)
 }

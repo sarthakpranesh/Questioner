@@ -4,21 +4,22 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strings"
 
 	"github.com/sarthakpranesh/Questioner/controllers"
 	"github.com/sarthakpranesh/Questioner/controllers/player"
 	"github.com/sarthakpranesh/Questioner/model"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // UpdatePlayerHandler is used to update username of the player
 func UpdatePlayerHandler(response http.ResponseWriter, request *http.Request) {
 	response.Header().Add("content-type", "application/json")
-	s := strings.ReplaceAll(request.Header.Values("Authorization")[0], "Bearer ", "")
-	id, _ := primitive.ObjectIDFromHex(s)
+	id, err := controllers.ParseToken(request)
+	if err != nil {
+		response.WriteHeader(http.StatusUnauthorized)
+		response.Write(controllers.ResponseError(err))
+	}
 	var p model.Player
-	err := json.NewDecoder(request.Body).Decode(&p)
+	err = json.NewDecoder(request.Body).Decode(&p)
 	if err != nil {
 		log.Println("json decode request.Body failed in UpdatePlayerHandler:", err.Error())
 		response.WriteHeader(http.StatusBadRequest)
