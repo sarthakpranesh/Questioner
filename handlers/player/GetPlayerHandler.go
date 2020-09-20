@@ -6,7 +6,16 @@ import (
 
 	"github.com/sarthakpranesh/Questioner/controllers"
 	"github.com/sarthakpranesh/Questioner/controllers/player"
+	"github.com/sarthakpranesh/Questioner/model"
 )
+
+type GetPlayerResponse struct {
+	Message  string `json:"message"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	Score    uint32 `json:"score"`
+	Level    uint8  `json:"level"`
+}
 
 // GetPlayerHandler retrives the player using player id
 func GetPlayerHandler(response http.ResponseWriter, request *http.Request) {
@@ -17,12 +26,18 @@ func GetPlayerHandler(response http.ResponseWriter, request *http.Request) {
 		response.Write(controllers.ResponseError(err))
 		return
 	}
-	result, err := player.GetPlayer(id)
+	result, err := player.GetPlayer(model.Player{ID: id})
 	if err != nil {
 		response.WriteHeader(http.StatusBadRequest)
 		response.Write(controllers.ResponseError(err))
 		return
 	}
-	result.Password = ""
-	json.NewEncoder(response).Encode(result)
+	gpr := GetPlayerResponse{
+		Message:  "Player information retrived",
+		Username: result.Username,
+		Email:    result.Email,
+		Score:    result.Score,
+		Level:    result.Level,
+	}
+	json.NewEncoder(response).Encode(gpr)
 }

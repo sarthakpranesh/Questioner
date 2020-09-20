@@ -21,6 +21,7 @@ func main() {
 
 	router := mux.NewRouter()
 	router.HandleFunc("/player", player.CreatePlayerHandler).Methods("POST")
+	router.HandleFunc("/player/sign_in", player.SignInHandler).Methods("POST")
 	router.HandleFunc("/player/update", player.UpdatePlayerHandler).Methods("POST")
 	router.HandleFunc("/player", player.GetPlayerHandler).Methods("GET")
 	router.HandleFunc("/question", question.CreateQuestionHandler).Methods("POST")
