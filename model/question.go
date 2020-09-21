@@ -9,7 +9,8 @@ type Question struct {
 	ID       primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
 	Name     string             `json:"name,omitempty" bson:"name,omitempty"`
 	Question string             `json:"question,omitempty" bson:"question,omitempty"`
-	Answer   string             `json:"answer,omitempty" bson:"answer,omitempty"`
+	Answer   []string           `json:"answer,omitempty" bson:"answer,omitempty"`
+	Extra    string             `json:"extra,omitempty" bson:"extra,omitempty"` // this should be encoded JSON of whatever extra things that you want to store, like hints, descriptions, etc.
 }
 
 // Valid method validates the question
