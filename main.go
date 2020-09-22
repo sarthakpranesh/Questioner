@@ -24,6 +24,7 @@ func main() {
 	router.HandleFunc("/player/sign_in", player.SignInHandler).Methods("POST")
 	router.HandleFunc("/player/update", player.UpdatePlayerHandler).Methods("POST")
 	router.HandleFunc("/player", player.GetPlayerHandler).Methods("GET")
+	router.HandleFunc("/player/play", player.AnswerQuesHandler).Methods("POST")
 	router.HandleFunc("/question", question.CreateQuestionHandler).Methods("POST")
 	router.HandleFunc("/question/{id}", question.GetQuestionHandler).Methods("GET")
 	router.HandleFunc("/question/{id}", question.DeleteQuestionHandler).Methods("DELETE")
