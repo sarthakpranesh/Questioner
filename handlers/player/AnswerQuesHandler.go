@@ -4,24 +4,23 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/sarthakpranesh/Questioner/model"
-
 	"github.com/sarthakpranesh/Questioner/controllers"
 	"github.com/sarthakpranesh/Questioner/controllers/player"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type AnswerRequest struct {
+type answerRequest struct {
 	QID    string `json:"qId"`
 	Answer string `json:"answer"`
 }
 
-type AnswerResponse struct {
-	Message   string       `json:"message"`
-	IsCorrect bool         `json:"isCorrect"`
-	Player    model.Player `json:"player"`
+type answerResponse struct {
+	Message   string     `json:"message"`
+	IsCorrect bool       `json:"isCorrect"`
+	Payload   PlayerInfo `json:"payload"`
 }
 
+// AnswerQuesHandler used to check if the user Answer is correct
 func AnswerQuesHandler(response http.ResponseWriter, request *http.Request) {
 	response.Header().Add("content-type", "application/json")
 	id, err := controllers.ParseToken(request)
@@ -30,7 +29,7 @@ func AnswerQuesHandler(response http.ResponseWriter, request *http.Request) {
 		response.Write(controllers.ResponseError(err))
 		return
 	}
-	var a AnswerRequest
+	var a answerRequest
 	json.NewDecoder(request.Body).Decode(&a)
 	quesID, err := primitive.ObjectIDFromHex(a.QID)
 	if err != nil {
@@ -44,10 +43,15 @@ func AnswerQuesHandler(response http.ResponseWriter, request *http.Request) {
 		response.Write(controllers.ResponseError(err))
 		return
 	}
-	var ar AnswerResponse = AnswerResponse{
-		Player:    p,
-		IsCorrect: b,
+	var ar answerResponse = answerResponse{
 		Message:   "Answer checking successful",
+		IsCorrect: b,
+		Payload: PlayerInfo{
+			Username: p.Username,
+			Email:    p.Email,
+			Score:    p.Score,
+			Level:    p.Level,
+		},
 	}
 	json.NewEncoder(response).Encode(ar)
 }

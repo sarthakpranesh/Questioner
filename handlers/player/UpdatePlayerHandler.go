@@ -10,7 +10,10 @@ import (
 	"github.com/sarthakpranesh/Questioner/model"
 )
 
-type UpdatePlayerResponse GetPlayerResponse
+type updatePlayerResponse struct {
+	Message string     `json:"message"`
+	Payload PlayerInfo `json:"payload"`
+}
 
 // UpdatePlayerHandler is used to update username of the player
 func UpdatePlayerHandler(response http.ResponseWriter, request *http.Request) {
@@ -40,12 +43,14 @@ func UpdatePlayerHandler(response http.ResponseWriter, request *http.Request) {
 		response.Write(controllers.ResponseError(err2))
 		return
 	}
-	upr := UpdatePlayerResponse{
-		Message:  "Player information updated",
-		Username: result.Username,
-		Email:    result.Email,
-		Score:    result.Score,
-		Level:    result.Level,
+	upr := updatePlayerResponse{
+		Message: "Player information updated",
+		Payload: PlayerInfo{
+			Username: result.Username,
+			Email:    result.Email,
+			Score:    result.Score,
+			Level:    result.Level,
+		},
 	}
 	json.NewEncoder(response).Encode(upr)
 }

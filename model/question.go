@@ -10,6 +10,7 @@ type Question struct {
 	Name     string             `json:"name,omitempty" bson:"name,omitempty"`
 	Question string             `json:"question,omitempty" bson:"question,omitempty"`
 	Answer   []string           `json:"answer,omitempty" bson:"answer,omitempty"`
+	Level    uint8              `json:"level" bson:"level"`
 	Extra    string             `json:"extra,omitempty" bson:"extra,omitempty"` // this should be encoded JSON of whatever extra things that you want to store, like hints, descriptions, etc.
 }
 
@@ -25,6 +26,10 @@ func (q Question) Valid() (bool, string) {
 
 	if len(q.Answer) < 1 && len(q.Answer) > 140 {
 		return false, "Question's answer should be 1 to 140 characters long!"
+	}
+
+	if q.Level <= 0 {
+		return false, "Question's level cannot be negative!"
 	}
 
 	return true, ""

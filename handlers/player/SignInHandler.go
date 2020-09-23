@@ -14,10 +14,10 @@ import (
 	"github.com/sarthakpranesh/Questioner/model"
 )
 
-type SignInResponse struct {
-	Message string            `json:"message"`
-	Token   string            `json:"token"`
-	Player  GetPlayerResponse `json:"player"`
+type signInResponse struct {
+	Message string     `json:"message"`
+	Token   string     `json:"token"`
+	Payload PlayerInfo `json:"payload"`
 }
 
 // SignInHandler helps the user retrive the auth token
@@ -50,11 +50,10 @@ func SignInHandler(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 	token := jwt.EncodeSegment([]byte(result.ID.Hex()))
-	sir := SignInResponse{
+	sir := signInResponse{
 		Message: "Successful sign in",
 		Token:   token,
-		Player: GetPlayerResponse{
-			Message:  "Player information",
+		Payload: PlayerInfo{
 			Username: result.Username,
 			Email:    result.Email,
 			Score:    result.Score,

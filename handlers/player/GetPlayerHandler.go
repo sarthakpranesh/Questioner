@@ -9,12 +9,16 @@ import (
 	"github.com/sarthakpranesh/Questioner/model"
 )
 
-type GetPlayerResponse struct {
-	Message  string `json:"message"`
+type PlayerInfo struct {
 	Username string `json:"username"`
 	Email    string `json:"email"`
 	Score    uint32 `json:"score"`
 	Level    uint8  `json:"level"`
+}
+
+type getPlayerResponse struct {
+	Message string     `json:"message"`
+	Payload PlayerInfo `json:"payload"`
 }
 
 // GetPlayerHandler retrives the player using player id
@@ -32,12 +36,14 @@ func GetPlayerHandler(response http.ResponseWriter, request *http.Request) {
 		response.Write(controllers.ResponseError(err))
 		return
 	}
-	gpr := GetPlayerResponse{
-		Message:  "Player information retrived",
-		Username: result.Username,
-		Email:    result.Email,
-		Score:    result.Score,
-		Level:    result.Level,
+	gpr := getPlayerResponse{
+		Message: "Player information retrived",
+		Payload: PlayerInfo{
+			Username: result.Username,
+			Email:    result.Email,
+			Score:    result.Score,
+			Level:    result.Level,
+		},
 	}
 	json.NewEncoder(response).Encode(gpr)
 }
