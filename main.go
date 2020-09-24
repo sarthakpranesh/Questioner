@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/sarthakpranesh/Questioner/handlers/player"
 	"github.com/sarthakpranesh/Questioner/handlers/question"
@@ -30,7 +31,7 @@ func main() {
 	router.HandleFunc("/question", question.CreateQuestionHandler).Methods("POST")
 	router.HandleFunc("/question/{id}", question.DeleteQuestionHandler).Methods("DELETE")
 
-	err := http.ListenAndServe(":8080", router)
+	err := http.ListenAndServe("0.0.0.0:"+os.Getenv("PORT"), router)
 	if err != nil {
 		log.Fatalln("Unable to start server!, Error:", err.Error())
 	}

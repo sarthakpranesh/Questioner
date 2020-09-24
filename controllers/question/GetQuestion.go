@@ -33,7 +33,7 @@ func GetQuestions() ([]model.Question, error) {
 	collection := connect.Collection("test", "question")
 	cursor, err := collection.Find(ctx, bson.M{})
 	if err != nil {
-		log.Println("Error in GetQuestion:", err.Error())
+		log.Println("Error in GetQuestions:", err.Error())
 		return []model.Question{}, err
 	}
 	var qarr []model.Question
