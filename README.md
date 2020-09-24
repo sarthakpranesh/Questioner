@@ -38,6 +38,7 @@ For local development
     ADMIN_PASSWORD = "<your admin password>"
     PORT = "<your port number>"
     ```
+    here the `ADMIN_PASSWORD` is used as an key to authenticate creation and deletion of questions
 3. `go mod tidy`
 4. `go run main.go` - you'll have to restart the server each time you make a change to see its affect
 
